@@ -1,0 +1,41 @@
+
+LOAD CSV WITH HEADERS FROM "file:///PersonRel_Format.csv" AS line
+match (from:person{id:line.from_id}),(to:person{id:line.to_id})
+merge (from)-[r:rel{property1:line.property1,property2:line.property2}]->(to)
+
+LOAD CSV WITH HEADERS FROM "file:///PersonRel_Format.csv" AS line
+match (from:person{id:line.from_id}),(to:person{id:line.to_id})
+merge (from)-[r:rel{property1:line.property1,property2:line.property2}]->(to)
+
+LOAD CSV WITH HEADERS  FROM "file:///person_Format.csv" AS line
+MERGE (p:person{id:line.id,name:line.name,age:line.age})
+
+
+
+LOAD CSV WITH HEADERS  FROM "file:///Result.csv" AS line
+MERGE (p:user{id:line.userIdentity,name:line.userName})
+
+LOAD CSV WITH HEADERS  FROM "file:///Result.csv" AS line
+MERGE (s:service{name:line.serviceName})
+
+LOAD CSV WITH HEADERS FROM "file:///Result.csv" AS line
+match (from:user{name:line.userName}),(to:service{name:line.serviceName})
+merge (from)-[r:rel{event:line.eventName,eventTime:line.eventTime}]->(to)
+
+
+
+LOAD CSV WITH HEADERS FROM "file:///Result.csv" AS line
+match (from{name:line.userName})-[R]->()
+delete R
+
+LOAD CSV WITH HEADERS  FROM "file:///Result.csv" AS line
+MERGE (s:action{name:line.eventName})
+
+
+LOAD CSV WITH HEADERS FROM "file:///Result.csv" AS line
+match (from:user{name:line.userName}),(to:action{name:line.eventName})
+merge (from)-[r:do{eventTime:line.eventTime}]->(to)
+
+LOAD CSV WITH HEADERS FROM "file:///Result.csv" AS line
+match (from:action{name:line.eventName}),(to:service{name:line.serviceName})
+merge (from)-[r:on{eventTime:line.eventTime}]->(to)
